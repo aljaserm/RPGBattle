@@ -1,5 +1,5 @@
 import random
-
+from .Magic import Spell
 
 class bcColor:
     HEADER = '\033[95m'
@@ -13,7 +13,7 @@ class bcColor:
 
 
 class Person:
-    def __init__(self, hp, mp, atk, df, mg):
+    def __init__(self, hp, mp, atk, df, mg,items):
         self.maxHitPoint = hp
         self.hitPoint = hp
         self.maxMagicPoint = mp
@@ -22,21 +22,22 @@ class Person:
         self.attackLow = atk - 10
         self.defense = df
         self.magic = mg
-        self.action = ["Attack", "Magic"]
+        self.items= items
+        self.action = ["Attack", "Magic", "Items"]
 
     def generateDamage(self):
         return random.randrange(self.attackLow, self.attackHigh)
-
-    def generateSpellDamage(self, s):
-        magicLow = self.magic[s]["dmg"] - 5
-        magicHigh = self.magic[s]["dmg"] + 5
-        return random.randrange(magicLow, magicHigh)
 
     def takeDamage(self, dmg):
         self.hitPoint -= dmg
         if self.hitPoint < 0:
             self.hitPoint = 0
         return self.hitPoint
+
+    def heal(self,dmg):
+        self.hitPoint+=dmg
+        if self.hitPoint<self.maxHitPoint:
+            self.hitPoint=self.maxHitPoint
 
     def getHitPoint(self):
         return self.hitPoint
@@ -53,22 +54,22 @@ class Person:
     def reduceMagicPoint(self, cost):
         self.magicPoint -= cost
 
-    def getSpellName(self, s):
-        return self.magic[s]["name"]
-
-    def getSpellCost(self, s):
-        return self.magic[s]["cost"]
-
     def actionPick(self):
         i = 1
-        print("Action")
+        print("\nAction")
         for item in self.action:
-            print(str(i) + ":", item)
+            print(str(i) + ".", item)
             i += 1
 
     def MagicPick(self):
         i = 1
-        print("Magic")
+        print("\nMagic")
         for spell in self.magic:
-            print(str(i) + ":", spell["name"], " (cost: ", str(spell["magicPoint"]+")"))
+            print("    "+str(i) + ".", spell.name, "(cost:", str(spell.cost) + ")")
+            i += 1
+    def ItemPick(self):
+        i = 1
+        print("\nItem")
+        for item in self.items:
+            print("    "+str(i) + ".", item["item"].name, ":", item["item"].description, " (x"+str(item["quantity"])+")")
             i += 1
